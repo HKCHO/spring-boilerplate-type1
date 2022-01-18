@@ -1,0 +1,109 @@
+###############################################################################################
+# Spring Backend Boilerplate
+#
+# @author : hkcho<eddie88cho@clecue.com>
+#
+# 조팀장님의 상냥한 설명을 곁들였으므로 두 손모아 감사하며 공부할 것
+###############################################################################################
+
+# 기동시 활성화할 프로필 설정
+# Comma seprate 가능하고 yml list 문법으로 여러개 사용 가능
+# 기본세팅 : local, dev, stage, prod, localredis
+spring.profiles.active: local
+
+# 모든 프로필에서 공통으로 사용할 설정이야
+# Common application properties
+# 제발 나한테 물어보지 말고 ---> https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html
+spring:
+  # 공식적으로 spring에서는 jsp를 더이상 지원 안하므로 jsp 파일위치에 대한 prefix, suffix를 손수 설정해줘야함
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp
+      suffix: .jsp
+  servlet:
+
+    # multipart 설정
+    multipart:
+      # 업로드시 한 파일의 최대 크기
+      max-file-size: 10MB
+      # 업로드 요청시 최대 크기
+      max-request-size: 100MB
+
+server:
+  error:
+    # White label: 나는 화이트라벨이 좋아
+    whitelabel:
+      enabled: true
+  servlet:
+    # 화면에서는 2시간 타임아웃 시킴, 실제로는 121m에서 session timeout 시킴
+    session:
+      timeout: 121m
+      cookie:
+        max-age: 121m
+
+---
+###############################################################################################
+# DEVELOPER LOCAL
+# 개발자가 로컬환경 개발할 때 사용할 프로필 설정이니라
+###############################################################################################
+spring.config.activate.on-profile: local
+
+spring:
+  datasource:
+    hikari.connection-test-query: SELECT 1
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: [로컬환경에서 개발시 사용할 데이터베이스 주소]
+    username: [데이터베이스 접속사용자명]
+    password: [데이터베이스 접속비밀번호]
+  devtools:
+    livereload:
+      enabled: true
+
+# 로그 설정
+logging:
+  file:
+    # 개발자 환경에 맞게 수정할 것
+    path: /Users/eddie/eddie88cho/backend/logs
+  config: classpath:logback-dev.xml
+
+---
+###############################################################################################
+# DEVELOPMENT PROPERTIES
+# 개발서버 배포할 때 사용할 설정이니라
+###############################################################################################
+spring.config.activate.on-profile: dev
+
+spring:
+  datasource:
+    hikari.connection-test-query: SELECT 1
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: [개발서버에서 사용할 데이터베이스 주소]
+    username: [데이터베이스 접속사용자명]
+    password: [데이터베이스 접속비밀번호]
+
+# 로그 설정
+logging:
+  file:
+    path: /eddie88cho/dev/logs/backend
+  config: classpath:logback-dev.xml
+
+---
+###############################################################################################
+# PRODUCTION PROPERTIES
+# 운영서버 배포할 때 사용할 설정이니라
+###############################################################################################
+spring.config.activate.on-profile: prod
+
+spring:
+  datasource:
+    hikari.connection-test-query: SELECT 1
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: [운영서버에서 사용할 데이터베이스 주소]
+    username: [데이터베이스 접속사용자명]
+    password: [데이터베이스 접속비밀번호]
+
+# 로그 설정
+logging:
+  file:
+    path: /eddie88cho/dev/logs/backend
+  config: classpath:logback-prod.xml
